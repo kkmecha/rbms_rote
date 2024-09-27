@@ -21,7 +21,7 @@ Thread thread_spd;
   
 int torque[MOTOR_NUM]; // 制御用  
 short speed[MOTOR_NUM];  
-short rote[MOTOR_NUM], sumR[MOTOR_NUM], spd[MOTOR_NUM]; // 値取得用 (0°~359°), (0°~LONG_MAX)  
+short rote[MOTOR_NUM], sumR[MOTOR_NUM], spd[MOTOR_NUM]; // 値取得用 (0°〜359°), (0°~LONG_MAX)  
   
 void spd_con();
   
