@@ -59,29 +59,30 @@ int rbms_rote::rbms_send(int* motor) {
 }
 
 void rbms_rote::rbms_read(CANMessage &msg, short *rotation, short *speed) {
-            _r = (msg.data[0] << 8) | (msg.data[1] & 0xff);
-            _rotation = (float)_r / 8192 * 360;//8192=360°
-            *rotation = _rotation;
- 
-            _speed = (msg.data[2] << 8) | (msg.data[3] & 0xff);
-            if (_speed & 0b1000000000000000){//マイナス値の場合(最上位ビットが1のとき)(2の補数)
-                _speed--;
-                _speed = -~_speed;
-            }
-            *speed = _speed;
+    _r = (msg.data[0] << 8) | (msg.data[1] & 0xff);
+    _rotation = (float)_r / 8192 * 360;//8192=360°
+    *rotation = _rotation;
 
-            _torque = (msg.data[4] << 8) | (msg.data[5] & 0xff);
-            if (_torque & 0b1000000000000000){
-                _torque--;
-                _torque = -~_torque;
-            }
+    _speed = (msg.data[2] << 8) | (msg.data[3] & 0xff);
+    if (_speed & 0b1000000000000000){//マイナス値の場合(最上位ビットが1のとき)(2の補数)
+        _speed--;
+        _speed = -~_speed;
+    }
+    *speed = _speed;
 
-            _temperature = msg.data[6];
+    _torque = (msg.data[4] << 8) | (msg.data[5] & 0xff);
+    if (_torque & 0b1000000000000000){
+        _torque--;
+        _torque = -~_torque;
+    }
+
+    _temperature = msg.data[6];
             
 }
 
 void rbms_rote::rote_robo_ms_update(CANMessage *msg, int BUFFER_MAX, bool angle_type)
 {
+    short tmpR[_motor_num], rote[_motor_num], spd[_motor_num];
     _angle_type = angle_type;
     // if(_debugmsg)printf("motor%d sumS:%d sumD:%d rote:%d spd:%d deltaR:%d tmpR:%d\n",_motornum,(int)sumRstatic,(int)sumRdynamic,rote,spd,deltaR,tmpR);
     int msgnum = 0x201 + _motor_num;
@@ -90,36 +91,38 @@ void rbms_rote::rote_robo_ms_update(CANMessage *msg, int BUFFER_MAX, bool angle_
         if (msg[i].id == msgnum)
             _msg = msg[i];
     }
-    rbms_read(_msg, &rote, &spd);
+    rbms_read(_msg, rote, spd);
     
-    if (rote < tmpR && spd > 0) // 正転時
-    {
-        deltaR = (short)(360 - tmpR) + rote;
-    }
-    else if (rote > tmpR && spd > 0)
-    {
-        deltaR = rote - tmpR;
-    }
-    if (rote > tmpR && spd < 0) // 反転時    
-    {
-        deltaR = (short)(360 - rote) + tmpR;
-        deltaR *= -1;
-    }
-    else if (rote < tmpR && spd < 0)
-    {
-        deltaR = rote - tmpR;
-    }
-    if (rote == tmpR) //変化なし
-    {
-        deltaR = 0;
-    }
+    for(int i = 0; i < _motor_num; i++){
+        if (rote[i] < tmpR[i] && spd[i] > 0) // 正転時
+        {
+            deltaR = (short)(360 - tmpR[i]) + rote[i];
+        }
+        else if (rote[i] > tmpR[i] && spd[i] > 0)
+        {
+            deltaR = rote[i] - tmpR[i];
+        }
+        if (rote[i] > tmpR[i] && spd[i] < 0) // 反転時    
+        {
+            deltaR = (short)(360 - rote[i]) + tmpR[i];
+            deltaR *= -1;
+        }
+        else if (rote[i] < tmpR[i] && spd[i] < 0)
+        {
+            deltaR = rote[i] - tmpR[i];
+        }
+        if (rote[i] == tmpR[i]) //変化なし
+        {
+            deltaR = 0;
+        }
 
-    // printf("%x\n",msgnum);
-    // printf("motor%d length:%d spd:%d rote:%d deltaR:%d\n",_motornum,(int)sumLength,spd,(int)sumRdynamic,deltaR);
-
-    sumRstatic += deltaR;
-
-    tmpR = rote;
+        sumRstatic += deltaR;
+        tmpR[i] = rote[i];
+        // printf("%x\n",msgnum);
+        // printf("motor%d length:%d spd:%d rote:%d deltaR:%d\n",_motornum,(int)sumLength,spd,(int)sumRdynamic,deltaR);
+        _spd[i] = spd[i];
+        _rote[i] = rote[i];
+    }
 }
 
 float rbms_rote::speed_pid(float T, short rpm_now, short set_speed,float *delta_rpm_pre,float *ie,float KP, float KI,float KD )//pid制御
@@ -170,8 +173,19 @@ long rbms_rote::get_rote()
 {
     if(_angle_type)
         return sumRstatic;
-    else
-        return static_cast<long>(rote);
+}
+
+void rbms_rote::get_rote(short *rote)
+{
+    for(int i = 0; i < _motor_num; i++){
+        rote[i] = _rote[i];
+    }
+}
+
+void rbms_rote::get_spd(short *spd){
+    for(int i = 0; i < _motor_num; i++){
+        spd[i] = _spd[i];
+    }
 }
 
 void rbms_rote::set_static_reset(int num)
