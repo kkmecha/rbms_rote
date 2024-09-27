@@ -7,6 +7,7 @@
 #define GIAR_RATIO_M3508 19
 #define DEG_PER_RAD 0.017444f
 #define BRAKE_GAIN 4
+#define MOTOR_MAX 8
 
 #include "mbed.h"
 
@@ -18,6 +19,8 @@ class rbms_rote{
         void spd_control(int* set_speed,int* motor); 
         void reset_ie();
         long get_rote();
+        void get_rote(short *rote);
+        void get_spd(short *spd);
         void set_static_reset(int num);
         float KP = 25;
         float KI = 10;
@@ -34,7 +37,7 @@ class rbms_rote{
         int _rotation, _speed, _torque, _temperature;
         bool _angle_type;
 
-        short deltaR, tmpR, rote, spd; // 角度計算用なので別にしている
+        short deltaR, _rote[MOTOR_MAX], _spd[MOTOR_MAX]; // 角度計算用なので別にしている
         long sumRstatic;
 };
 
