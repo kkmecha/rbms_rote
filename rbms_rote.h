@@ -18,7 +18,7 @@ class rbms_rote{
         void rote_robo_ms_update(CANMessage *msg, int BUFFER_MAX, bool angle_type);
         void spd_control(int* set_speed,int* motor); 
         void reset_ie();
-        long get_rote();
+        void get_rote(long *rote);
         void get_rote(short *rote);
         void get_spd(short *spd);
         void set_static_reset(int num);
