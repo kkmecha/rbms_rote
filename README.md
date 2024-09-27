@@ -21,7 +21,7 @@ Thread thread_spd;
   
 int torque[MOTOR_NUM]; // 制御用  
 short speed[MOTOR_NUM];  
-short rote[MOTOR_NUM], sumR[MOTOR_NUM], spd[MOTOR_NUM]; // 値取得用 (0°〜359°), (0°~LONG_MAX)  
+short rote[MOTOR_NUM], sumR[MOTOR_NUM], spd[MOTOR_NUM]; // 値取得用 (0°〜359°), (0°~LONG_MAX), 回転速度(rpm)  
   
 void spd_con();
   
@@ -32,6 +32,8 @@ int main(){
 　　　　// 速度の設定  
 　　　　speed[FL] = 200; speed[FR] = -200; speed[BL] = 200; speed[BR] = -200;  
 　　　　m2006.rbms_send(torque);  
+　　　　  
+　　　　// 角度の取得 2種類あり、0°から359°までの角度を取得する関数、0°からlong型の最大値までの角度を取得する関数があります  
 　　}  
 }  
   
