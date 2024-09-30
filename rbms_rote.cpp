@@ -80,10 +80,9 @@ void rbms_rote::rbms_read(CANMessage &msg, short *rotation, short *speed) {
             
 }
 
-void rbms_rote::rote_robo_ms_update(CANMessage *msg, int BUFFER_MAX, bool angle_type)
+void rbms_rote::rote_robo_ms_update(CANMessage *msg, int BUFFER_MAX)
 {
     short tmpR[_motor_num], rote[_motor_num], spd[_motor_num];
-    _angle_type = angle_type;
     // if(_debugmsg)printf("motor%d sumS:%d sumD:%d rote:%d spd:%d deltaR:%d tmpR:%d\n",_motornum,(int)sumRstatic,(int)sumRdynamic,rote,spd,deltaR,tmpR);
     int msgnum = 0x201 + _motor_num;
     for (int i = 0; i < BUFFER_MAX; i++)
@@ -183,7 +182,7 @@ void rbms_rote::get_rote(short *rote)
     }
 }
 
-void rbms_rote::get_spd(short *spd){
+void rbms_rote::get_rpm(short *spd){
     for(int i = 0; i < _motor_num; i++){
         spd[i] = _spd[i];
     }
