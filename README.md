@@ -30,7 +30,8 @@ short rote[MOTOR_NUM], spd[MOTOR_NUM]; // 値取得用 (0°〜359°), 回転速�
 long sumR[MOTOR_NUM]; // (0°~LONG_MAX)  
 void spd_con();
   
-int main(){  
+int main(){
+    // 速度制御時のゲインを外部から変更
     // ゲイン設定の例
     m2006.KP = 20;  
     m2006.KI = 5;  
