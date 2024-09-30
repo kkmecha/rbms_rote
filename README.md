@@ -4,7 +4,7 @@ rbms.hとrote_robo_ms.hの角度取得の機能を一つにまとめたライブ
 
 例  
 
-'''cpp
+'''cpp  
 #include "mbed.h"  
 #include "rbms_rote.h"  
   
