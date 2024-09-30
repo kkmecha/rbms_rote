@@ -15,12 +15,11 @@ class rbms_rote{
     public:
         rbms_rote(CAN &can, bool motor_type, int motor_num);
         int rbms_send(int* motor);
-        void rote_robo_ms_update(CANMessage *msg, int BUFFER_MAX, bool angle_type);
+        void rote_robo_ms_update(CANMessage *msg, int BUFFER_MAX);
         void spd_control(int* set_speed,int* motor); 
-        void reset_ie();
         void get_rote(long *rote);
         void get_rote(short *rote);
-        void get_spd(short *spd);
+        void get_rpm(short *spd);
         void set_static_reset(int num);
         float KP = 25;
         float KI = 10;
@@ -35,10 +34,9 @@ class rbms_rote{
         int _motor_num,_motor_max;
         unsigned short _r;
         int _rotation, _speed, _torque, _temperature;
-        bool _angle_type;
 
         short deltaR, _rote[MOTOR_MAX], _spd[MOTOR_MAX]; // 角度計算用なので別にしている
-        long sumRstatic;
+        long sumRstatic[MOTOR_MAX];
 };
 
 #endif
