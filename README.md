@@ -3,6 +3,8 @@ rbms.hとrote_robo_ms.hの角度取得の機能を一つにまとめたライブ
 速度制御のゲインを外部から変更できるようにしました  
 
 例  
+
+'''cpp
 #include "mbed.h"  
 #include "rbms_rote.h"  
   
