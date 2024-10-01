@@ -70,11 +70,10 @@ void spd_con(){
 void can_recive(){
     while(true){
         if(can.read(msg)){
-          for (int i = 1; i < BUFFER_MAX; i++){
-            buffer[i - 1] = buffer[i];
-          }
-          buffer[BUFFER_MAX - 1] = msg;
-          }
+            for (int i = 1; i < BUFFER_MAX; i++){
+                buffer[i - 1] = buffer[i];
+            }
+            buffer[BUFFER_MAX - 1] = msg;
         }
     }
-]
+}
